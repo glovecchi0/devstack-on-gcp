@@ -4,9 +4,6 @@ locals {
   horizon_config_template_file = "${path.cwd}/horizon.conf.tpl"
   horizon_config_file          = "${path.cwd}/horizon.conf"
   horizon_config_file_name     = "horizon.conf"
-  ssl_config_template_file     = "${path.cwd}/default-ssl.conf.tpl"
-  ssl_config_file              = "${path.cwd}/default-ssl.conf"
-  ssl_config_file_name         = "default-ssl.conf"
   private_ssh_key_path         = var.ssh_private_key_path == null ? "${path.cwd}/${var.prefix}-ssh_private_key.pem" : var.ssh_private_key_path
   public_ssh_key_path          = var.ssh_public_key_path == null ? "${path.cwd}/${var.prefix}-ssh_public_key.pem" : var.ssh_public_key_path
 }
