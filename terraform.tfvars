@@ -1,7 +1,0 @@
-prefix                   = "glovecchio"
-project_id               = "rancher-support-01"
-region                   = "europe-west8"
-devstack_adm_password    = "MyPassword1"
-devstack_db_password     = "MyPassword2"
-devstack_rabbit_password = "MyPassword3"
-devstack_svc_password    = "MyPassword4"
