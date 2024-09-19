@@ -1,6 +1,6 @@
-# devstack-on-ec2
+# devstack-on-gcp
 
-Install DevStack, the development version of OpenStack, in All-In-One mode on an AWS EC2 VM.
+Install DevStack, the development version of OpenStack, in All-In-One mode on a Google Cloud Compute Engine.
 
 # How to create resources
 
