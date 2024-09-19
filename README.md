@@ -31,7 +31,7 @@ terraform destroy -auto-approve
 tofu init -upgrade && tofu apply -auto-approve
 ```
 
-#### OpenTofu Apply
+#### OpenTofu Destroy
 ```bash
 tofu destroy -auto-approve
 ```
