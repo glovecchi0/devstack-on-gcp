@@ -1,3 +1,4 @@
+/*
 output "instances_private_ip" {
   description = "Google Compute Engine Instances Private IPs"
   value       = google_compute_instance.vm.*.network_interface.0.network_ip
@@ -12,6 +13,7 @@ output "public_ssh_key" {
   description = "Public SSH key if a new key pair is created, otherwise null"
   value       = var.create_ssh_key_pair ? tls_private_key.ssh_private_key[0].public_key_openssh : null
 }
+*/
 
 output "instance_ips" {
   description = "List of instances' public and private IPs"
@@ -27,4 +29,9 @@ output "instance_ips" {
 output "devstack_url" {
   description = "DevStack URL"
   value       = "https://${google_compute_instance.vm[0].network_interface.0.access_config.0.nat_ip}"
+}
+
+output "devstack_adm_password" {
+  description = "Password for DevStack Admin user"
+  value       = var.devstack_adm_password
 }

@@ -10,13 +10,13 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_cloudinit"></a> [cloudinit](#provider\_cloudinit) | n/a |
+| <a name="provider_cloudinit"></a> [cloudinit](#provider\_cloudinit) | 2.3.5 |
 | <a name="provider_google"></a> [google](#provider\_google) | 5.32.0 |
-| <a name="provider_local"></a> [local](#provider\_local) | n/a |
-| <a name="provider_null"></a> [null](#provider\_null) | n/a |
-| <a name="provider_random"></a> [random](#provider\_random) | n/a |
+| <a name="provider_local"></a> [local](#provider\_local) | 2.5.2 |
+| <a name="provider_null"></a> [null](#provider\_null) | 3.2.3 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.6.3 |
 | <a name="provider_ssh"></a> [ssh](#provider\_ssh) | 2.6.0 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | n/a |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | 4.0.6 |
 
 ## Modules
 
@@ -74,8 +74,6 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_devstack_adm_password"></a> [devstack\_adm\_password](#output\_devstack\_adm\_password) | Password for DevStack Admin user |
 | <a name="output_devstack_url"></a> [devstack\_url](#output\_devstack\_url) | DevStack URL |
 | <a name="output_instance_ips"></a> [instance\_ips](#output\_instance\_ips) | List of instances' public and private IPs |
-| <a name="output_instances_private_ip"></a> [instances\_private\_ip](#output\_instances\_private\_ip) | Google Compute Engine Instances Private IPs |
-| <a name="output_instances_public_ip"></a> [instances\_public\_ip](#output\_instances\_public\_ip) | Google Compute Engine Instances Public IPs |
-| <a name="output_public_ssh_key"></a> [public\_ssh\_key](#output\_public\_ssh\_key) | Public SSH key if a new key pair is created, otherwise null |
