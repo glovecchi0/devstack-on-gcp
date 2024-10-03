@@ -1,0 +1,80 @@
+## -- Prefix for all Google resources
+prefix = "myresources"
+
+## -- ID of the Google Cloud Project for resource creation
+project_id = "myproject"
+
+## -- Google Cloud region for resource deployment
+region = "us-west2"
+
+## -- Indicates if a new SSH key pair should be created
+create_ssh_key_pair = true
+
+## -- Path to the pre-generated SSH private key
+ssh_private_key_path = null
+
+## -- Path to the pre-generated SSH public key
+ssh_public_key_path = null
+
+## -- Private IP range for the Google subnet
+ip_cidr_range = "10.10.0.0/24"
+
+## -- Indicates if VPC/Subnet should be created
+create_vpc = true
+
+## -- Google VPC for all resources
+vpc = null
+
+## -- Google Subnet for all resources
+subnet = null
+
+## -- Indicates if a Google Firewall should be created
+create_firewall = true
+
+## -- Number of compute instances to create
+instance_count = 1
+
+## -- Disk size for each instance in GB
+instance_disk_size = 50
+
+## -- Disk type for each instance (e.g., 'pd-standard', 'pd-ssd')
+disk_type = "pd-balanced"
+
+## -- Google Compute Engine machine type for instances
+instance_type = "n2-standard-4"
+
+## -- Ubuntu 22.04 LTS image for instances
+os_image = "projects/ubuntu-os-cloud/global/images/ubuntu-2204-jammy-v20230908"
+
+## -- Username for SSH access
+ssh_username = "ubuntu"
+
+## -- Custom startup script for instances
+startup_script = null
+
+## -- Password for DevStack Admin user
+devstack_adm_password = "mypassword"
+
+## -- Password for DevStack Database
+devstack_db_password = "mypassword"
+
+## -- Password for DevStack RabbitMQ service
+devstack_rabbit_password = "mypassword"
+
+## -- Password for DevStack services
+devstack_svc_password = "mypassword"
+
+## -- Name for the image used within the DevStack environment
+devstack_image_name = "ubuntu22"
+
+## -- URL for the source image to be used within the DevStack environment
+devstack_image_source_url = "https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-amd64.img"
+
+## -- Name of the flavor to be used for instances in the DevStack environment
+devstack_flavor_name = "m1.medium"
+
+## -- Name of the security group to be applied to instances in the DevStack environment
+devstack_security_group = "default"
+
+## -- Name of the network to be used for instances in the DevStack environment
+devstack_network_name = "public"
