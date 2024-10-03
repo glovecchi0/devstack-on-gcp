@@ -65,3 +65,5 @@ $ ssh -oStrictHostKeyChecking=no -i <PREFIX>-ssh_private_key.pem <SSH_USERNAME>@
 $ sudo su -
 $ tail -100f /var/log/cloud-init-output.log
 ```
+
+**These scripts work perfectly from the macOS terminal; if you use any other Linux distribution, remove '' from the sed command.**
