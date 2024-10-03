@@ -16,24 +16,44 @@ Install DevStack, the development version of OpenStack, in All-In-One mode on a 
     -  `devstack_svc_password` to change the default DevStack Service password
 - Make sure you are logged into your Google Account from your local Terminal. See the preparatory steps [here](./gcloud.md).
 
-#### Terraform Apply
+#### Terraform Apply (Infrastructure only)
 ```bash
 terraform init -upgrade && terraform apply -auto-approve
 ```
 
-#### Terraform Destroy
+#### Terraform Apply (Infrastructure + OS Image + Compute Instance)
+```bash
+terraform init -upgrade && terraform apply -auto-approve && sed -i '' 's|/\*|#/\*|g; s|\*/|#\*/|g' main.tf provider.tf && terraform init -upgrade && terraform apply -auto-approve
+```
+
+#### Terraform Destroy (Infrastructure only)
 ```bash
 terraform destroy -auto-approve
 ```
 
-#### OpenTofu Apply
+#### Terraform Destroy (Infrastructure + OS Image + Compute Instance)
+```bash
+terraform destroy -auto-approve && sed -i '' 's/#//g' main.tf provider.tf
+```
+
+#### OpenTofu Apply (Infrastructure only)
 ```bash
 tofu init -upgrade && tofu apply -auto-approve
 ```
 
-#### OpenTofu Destroy
+#### OpenTofu Apply (Infrastructure + OS Image + Compute Instance)
+```bash
+tofu init -upgrade && tofu apply -auto-approve && sed -i '' 's|/\*|#/\*|g; s|\*/|#\*/|g' main.tf provider.tf && tofu init -upgrade && tofu apply -auto-approve
+```
+
+#### OpenTofu Destroy (Infrastructure only)
 ```bash
 tofu destroy -auto-approve
+```
+
+#### OpenTofu Destroy (Infrastructure + OS Image + Compute Instance)
+```bash
+tofu destroy -auto-approve && sed -i '' 's/#//g' main.tf provider.tf
 ```
 
 ## How to access Google Cloud VMs and check DevStack logs

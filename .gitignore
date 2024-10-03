@@ -17,3 +17,4 @@ terraform.tfvars
 .DS_Store
 cloud-config.yml
 horizon.conf
+update_endpoints.sh

@@ -85,7 +85,7 @@ variable "disk_type" {
 variable "instance_type" {
   description = "Google Compute Engine machine type for instances"
   type        = string
-  default     = "n2-standard-2"
+  default     = "n2-standard-4"
 }
 
 variable "os_image" {
@@ -128,4 +128,34 @@ variable "devstack_svc_password" {
   description = "Password for DevStack services"
   type        = string
   default     = "mypassword"
+}
+
+variable "devstack_image_name" {
+  description = "Name for the image used within the DevStack environment"
+  type        = string
+  default     = "ubuntu22"
+}
+
+variable "devstack_image_source_url" {
+  description = "URL for the source image to be used within the DevStack environment"
+  type        = string
+  default     = "https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-amd64.img"
+}
+
+variable "devstack_flavor_name" {
+  description = "Name of the flavor to be used for instances in the DevStack environment"
+  type        = string
+  default     = "m1.medium"
+}
+
+variable "devstack_security_group" {
+  description = "Name of the security group to be applied to instances in the DevStack environment"
+  type        = string
+  default     = "default"
+}
+
+variable "devstack_network_name" {
+  description = "Name of the network to be used for instances in the DevStack environment"
+  type        = string
+  default     = "public"
 }

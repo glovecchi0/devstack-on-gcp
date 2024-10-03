@@ -27,7 +27,7 @@ write_files:
         echo HORIZON_SSL_CERT="/etc/ssl/certs/devstack/selfsigned.crt" >> local.conf
         echo HORIZON_SSL_KEY="/etc/ssl/certs/devstack/selfsigned.key" >> local.conf
         echo ENABLE_HTTPD_MOD_SSL=True >> local.conf
- 
+
         # Generate self-signed SSL certificate
         sudo mkdir -p /etc/ssl/certs/devstack
         sudo openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 \

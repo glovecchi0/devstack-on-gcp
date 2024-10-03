@@ -1,11 +1,14 @@
 locals {
-  cloud_config_template_file   = "${path.cwd}/cloud-config.yml.tpl"
-  cloud_config_file            = "${path.cwd}/cloud-config.yml"
-  horizon_config_template_file = "${path.cwd}/horizon.conf.tpl"
-  horizon_config_file          = "${path.cwd}/horizon.conf"
-  horizon_config_file_name     = "horizon.conf"
-  private_ssh_key_path         = var.ssh_private_key_path == null ? "${path.cwd}/${var.prefix}-ssh_private_key.pem" : var.ssh_private_key_path
-  public_ssh_key_path          = var.ssh_public_key_path == null ? "${path.cwd}/${var.prefix}-ssh_public_key.pem" : var.ssh_public_key_path
+  cloud_config_template_file            = "${path.cwd}/cloud-config.yml.tpl"
+  cloud_config_file                     = "${path.cwd}/cloud-config.yml"
+  horizon_config_template_file          = "${path.cwd}/horizon.conf.tpl"
+  horizon_config_file                   = "${path.cwd}/horizon.conf"
+  horizon_config_file_name              = "horizon.conf"
+  update_endpoints_script_template_file = "${path.cwd}/update_endpoints.sh.tpl"
+  update_endpoints_script_file          = "${path.cwd}/update_endpoints.sh"
+  update_endpoints_script_file_name     = "update_endpoints.sh"
+  private_ssh_key_path                  = var.ssh_private_key_path == null ? "${path.cwd}/${var.prefix}-ssh_private_key.pem" : var.ssh_private_key_path
+  public_ssh_key_path                   = var.ssh_public_key_path == null ? "${path.cwd}/${var.prefix}-ssh_public_key.pem" : var.ssh_public_key_path
 }
 
 resource "local_file" "cloud_config" {
@@ -72,7 +75,7 @@ resource "google_compute_firewall" "firewall" {
   }
   allow {
     protocol = "tcp"
-    ports    = ["22", "443", "80"]
+    ports    = ["22", "443", "80", "9696"]
   }
   source_ranges = ["0.0.0.0/0"]
   target_tags   = ["${var.prefix}"]
@@ -138,8 +141,13 @@ resource "null_resource" "wait_devstack_services_startup" {
   }
 }
 
-resource "local_file" "horizon_config" {
+data "local_file" "ssh_private_key" {
   depends_on = [null_resource.wait_devstack_services_startup]
+  filename   = local.private_ssh_key_path
+}
+
+resource "local_file" "horizon_config" {
+  depends_on = [data.local_file.ssh_private_key]
   content = templatefile("${local.horizon_config_template_file}", {
     public_ip = google_compute_instance.vm[0].network_interface.0.access_config.0.nat_ip
   })
@@ -149,22 +157,94 @@ resource "local_file" "horizon_config" {
 
 resource "null_resource" "copy_horizon_config" {
   depends_on = [local_file.horizon_config]
-  provisioner "local-exec" {
-    command = "scp -oStrictHostKeyChecking=no -i ${local.private_ssh_key_path} ${local.horizon_config_file} ${var.ssh_username}@${google_compute_instance.vm[0].network_interface.0.access_config.0.nat_ip}:/tmp/${local.horizon_config_file_name}"
+  provisioner "file" {
+    source      = local.horizon_config_file
+    destination = "/tmp/${local.horizon_config_file_name}"
+  }
+  connection {
+    host        = google_compute_instance.vm[0].network_interface.0.access_config.0.nat_ip
+    type        = "ssh"
+    agent       = "false"
+    user        = var.ssh_username
+    private_key = data.local_file.ssh_private_key.content
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "sudo mv /tmp/${local.horizon_config_file_name} /etc/apache2/sites-available/${local.horizon_config_file_name}",
+      "sudo a2enmod ssl",
+      "sudo a2ensite ${local.horizon_config_file_name}",
+      "sudo service apache2 restart"
+    ]
+    connection {
+      type        = "ssh"
+      host        = google_compute_instance.vm[0].network_interface[0].access_config[0].nat_ip
+      user        = var.ssh_username
+      private_key = data.local_file.ssh_private_key.content
+    }
   }
 }
 
-data "local_file" "ssh_private_key" {
-  depends_on = [null_resource.copy_horizon_config]
-  filename   = local.private_ssh_key_path
+resource "local_file" "update_endpoints_script" {
+  depends_on = [data.local_file.ssh_private_key]
+  content = templatefile("${local.update_endpoints_script_template_file}", {
+    public_ip             = google_compute_instance.vm[0].network_interface.0.access_config.0.nat_ip,
+    devstack_adm_password = var.devstack_adm_password
+  })
+  file_permission = "0644"
+  filename        = local.update_endpoints_script_file
 }
 
-resource "ssh_resource" "reboot_apache2_service" {
-  depends_on = [data.local_file.ssh_private_key]
-  host       = google_compute_instance.vm[0].network_interface.0.access_config.0.nat_ip
-  commands = [
-    "sudo chown root:root /tmp/${local.horizon_config_file_name} ; sudo mv /tmp/${local.horizon_config_file_name} /etc/apache2/sites-available/${local.horizon_config_file_name} ; sudo a2enmod ssl ; sudo a2ensite ${local.horizon_config_file_name} ; sudo service apache2 restart"
-  ]
-  user        = var.ssh_username
-  private_key = data.local_file.ssh_private_key.content
+resource "null_resource" "copy_update_endpoints_script" {
+  depends_on = [local_file.update_endpoints_script]
+  provisioner "file" {
+    source      = local.update_endpoints_script_file
+    destination = "/tmp/${local.update_endpoints_script_file_name}"
+  }
+  connection {
+    host        = google_compute_instance.vm[0].network_interface.0.access_config.0.nat_ip
+    type        = "ssh"
+    agent       = "false"
+    user        = var.ssh_username
+    private_key = data.local_file.ssh_private_key.content
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "sudo mv /tmp/${local.update_endpoints_script_file_name} /home/stack/${local.update_endpoints_script_file_name}",
+      "sudo bash /home/stack/${local.update_endpoints_script_file_name}",
+      "sudo rm /home/stack/${local.update_endpoints_script_file_name}"
+    ]
+    connection {
+      type        = "ssh"
+      host        = google_compute_instance.vm[0].network_interface[0].access_config[0].nat_ip
+      user        = var.ssh_username
+      private_key = data.local_file.ssh_private_key.content
+    }
+  }
 }
+
+/*
+resource "openstack_images_image_v2" "basic_image" {
+  depends_on       = [null_resource.copy_update_endpoints_script]
+  name             = var.devstack_image_name
+  image_source_url = var.devstack_image_source_url
+  container_format = "bare"
+  disk_format      = "qcow2"
+  visibility       = "shared"
+}
+
+data "openstack_images_image_v2" "basic_image_id" {
+  depends_on = [openstack_images_image_v2.basic_image]
+  name       = var.devstack_image_name
+}
+
+resource "openstack_compute_instance_v2" "basic" {
+  depends_on      = [data.openstack_images_image_v2.basic_image_id]
+  name            = "basic"
+  image_id        = data.openstack_images_image_v2.basic_image_id.id
+  flavor_name     = var.devstack_flavor_name
+  security_groups = ["${var.devstack_security_group}"]
+  network {
+    name = var.devstack_network_name
+  }
+}
+*/
