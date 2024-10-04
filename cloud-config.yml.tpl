@@ -33,7 +33,8 @@ write_files:
         sudo openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 \
           -subj "/C=US/ST=State/L=City/O=Organization/OU=OrgUnit/CN=$(curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip)" \
           -keyout /etc/ssl/certs/devstack/selfsigned.key \
-          -out /etc/ssl/certs/devstack/selfsigned.crt
+          -out /etc/ssl/certs/devstack/selfsigned.crt \
+          -addext "subjectAltName = IP:$(curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip)"
 
         # Start DevStack
         ./stack.sh

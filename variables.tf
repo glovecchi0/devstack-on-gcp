@@ -142,6 +142,12 @@ variable "devstack_image_source_url" {
   default     = "https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-amd64.img"
 }
 
+variable "devstack_blockstorage_volume_size" {
+  description = "Size of the block storage volume in GB for the DevStack environment"
+  type        = number
+  default     = 5
+}
+
 variable "devstack_flavor_name" {
   description = "Name of the flavor to be used for instances in the DevStack environment"
   type        = string

@@ -240,9 +240,16 @@ data "openstack_images_image_v2" "basic_image_id" {
 resource "openstack_compute_instance_v2" "basic" {
   depends_on      = [data.openstack_images_image_v2.basic_image_id]
   name            = "basic"
-  image_id        = data.openstack_images_image_v2.basic_image_id.id
   flavor_name     = var.devstack_flavor_name
   security_groups = ["${var.devstack_security_group}"]
+  block_device {
+    uuid                  = data.openstack_images_image_v2.basic_image_id.id
+    source_type           = "image"
+    volume_size           = var.devstack_blockstorage_volume_size
+    boot_index            = 0
+    destination_type      = "volume"
+    delete_on_termination = true
+  }
   network {
     name = var.devstack_network_name
   }

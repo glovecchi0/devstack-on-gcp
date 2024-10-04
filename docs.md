@@ -52,6 +52,7 @@ No modules.
 | <a name="input_create_ssh_key_pair"></a> [create\_ssh\_key\_pair](#input\_create\_ssh\_key\_pair) | Indicates if a new SSH key pair should be created | `bool` | `true` | no |
 | <a name="input_create_vpc"></a> [create\_vpc](#input\_create\_vpc) | Indicates if VPC/Subnet should be created | `bool` | `true` | no |
 | <a name="input_devstack_adm_password"></a> [devstack\_adm\_password](#input\_devstack\_adm\_password) | Password for DevStack Admin user | `string` | `"mypassword"` | no |
+| <a name="input_devstack_blockstorage_volume_size"></a> [devstack\_blockstorage\_volume\_size](#input\_devstack\_blockstorage\_volume\_size) | Size of the block storage volume in GB for the DevStack environment | `number` | `5` | no |
 | <a name="input_devstack_db_password"></a> [devstack\_db\_password](#input\_devstack\_db\_password) | Password for DevStack Database | `string` | `"mypassword"` | no |
 | <a name="input_devstack_flavor_name"></a> [devstack\_flavor\_name](#input\_devstack\_flavor\_name) | Name of the flavor to be used for instances in the DevStack environment | `string` | `"m1.medium"` | no |
 | <a name="input_devstack_image_name"></a> [devstack\_image\_name](#input\_devstack\_image\_name) | Name for the image used within the DevStack environment | `string` | `"ubuntu22"` | no |
