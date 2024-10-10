@@ -13,23 +13,30 @@ export OS_IDENTITY_API_VERSION=3
 
 # Update OpenStack endpoints to use the public IP
 PUBLIC_IP="${public_ip}"
-services=("image" "compute_legacy" "volumev3" "network" "compute" "block-storage" "identity" "placement")
-urls=(
-    "http://$PUBLIC_IP/image"
-    "http://$PUBLIC_IP/compute/v2/\$(project_id)s"
-    "http://$PUBLIC_IP/volume/v3/\$(project_id)s"
-    "http://$PUBLIC_IP:9696/networking"
-    "http://$PUBLIC_IP/compute/v2.1"
-    "http://$PUBLIC_IP/volume/v3/\$(project_id)s"
-    "http://$PUBLIC_IP/identity"
-    "http://$PUBLIC_IP/placement"
-)
-        
-# Loop through services to update their endpoints
-for i in $${!services[@]}; do
-  endpoint_id=$(openstack endpoint list --service $${services[$i]} --interface public -c ID -f value)
-  [[ -n $endpoint_id ]] && openstack endpoint set --url "$${urls[$i]}" $endpoint_id
-done
+
+# Retrieve all current public endpoints
+endpoint_list=$(openstack endpoint list --interface public -c ID -c URL -f value)
+
+# Loop through each endpoint and update the URL to replace the existing IP with the new one
+while IFS= read -r line; do
+  endpoint_id=$(echo $line | awk '{print $1}')
+  current_url=$(echo $line | awk '{print $2}')
+
+  # Extract the current IP from the URL (assumes URL is of the form http://IP:port/service)
+  current_ip=$(echo $current_url | sed -n 's#http://\([0-9.]*\).*#\1#p')
+
+  # If the current IP is different from the new public IP, update the endpoint
+  if [[ "$current_ip" != "$PUBLIC_IP" ]]; then
+    # Replace the current IP with the new public IP in the URL
+    new_url=$(echo $current_url | sed "s/$current_ip/$PUBLIC_IP/")
+
+    # Update the endpoint with the new URL
+    echo "Updating endpoint $endpoint_id: $current_url -> $new_url"
+    openstack endpoint set --url "$new_url" $endpoint_id
+  else
+    echo "Endpoint $endpoint_id is already using $PUBLIC_IP, no update needed."
+  fi
+done <<< "$endpoint_list"
 
 echo "Endpoints have been updated."
 openstack endpoint list

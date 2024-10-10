@@ -16,6 +16,7 @@ write_files:
         cd /home/stack
         git clone https://git.openstack.org/openstack-dev/devstack
         cd devstack
+        git checkout stable/2024.2
         echo '[[local|localrc]]' > local.conf
         echo ADMIN_PASSWORD="${devstack_adm_password}" >> local.conf
         echo DATABASE_PASSWORD="${devstack_db_password}" >> local.conf
