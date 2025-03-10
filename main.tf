@@ -230,6 +230,9 @@ resource "openstack_images_image_v2" "basic_image" {
   container_format = "bare"
   disk_format      = "qcow2"
   visibility       = "shared"
+  properties = {
+    key = "value"
+  }
 }
 
 data "openstack_images_image_v2" "basic_image_id" {
